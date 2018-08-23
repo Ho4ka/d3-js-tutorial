@@ -6,16 +6,16 @@ function gridData() {
     var data = new Array();
     var xpos = 1; //starting xpos and ypos at 1 so the stroke will show when we make the grid below
     var ypos = 1;
-    var width = 25;
-    var height = 25;
+    var width = 18;
+    var height = 18;
 
 
     // iterate for rows
-    for (var row = 0; row < 50; row++) {
+    for (var row = 0; row < 76; row++) {
         data.push( new Array() );
 
         // iterate for cells/columns inside rows
-        for (var column = 0; column < 76; column++) {
+        for (var column = 0; column < 104; column++) {
             data[row].push({
                 x: xpos,
                 y: ypos,
@@ -63,25 +63,17 @@ var column = row.selectAll(".square")
 
 // end of grid
 
+let w = 200,
+    h = 100;
 
+   let nodes = [
+        {name: 'Comp-1', x: 10, y: 20 },
+        {name: 'Comp-2', x: 150 , y: 150},
+        {name: 'Comp-3', x: 279, y: 280 },
+        {name: 'Comp-4', x: 460, y: 390 },
+        {name: 'Comp-5', x: 690, y: 420 }
 
-let width ,
-    height ,
-    // constant = 10,
-    color = "#BCD8CD"
-
-// let
-    // scale = 2,
-    // w = 100,
-    // h = 50,
-    nodes = [
-        {name: 'Comp-1', x:  10, y: 20 , width:200,height:100 , color :color  },
-        {name: 'Comp-2', x: 150 , y: 150 ,width:200,height:100 ,color :color},
-        {name: 'Comp-3', x:  279, y: 280 ,width:200,height:100, color :color },
-        {name: 'Comp-4', x:  460, y: 390 ,width:200,height:100, color :color},
-        {name: 'Comp-5', x:  690, y: 420 ,width:200,height:100 ,color :color}
-
-    ]
+    ];
         // .map(function(d, i){return (d.fixed = (i !== 5), d)});
 
 
@@ -96,10 +88,6 @@ let links = [
 ];
 
 let svg  = d3.select('#svg');
-// let svg = d3.select('body').append('svg')
-//     .attr('width', '100%')
-//     .attr('height', '800');
-
 
 let markerW = 9, markerH = 6,
     marker = svg.append('marker')
@@ -122,7 +110,7 @@ let force = d3.layout.force()
     .nodes(nodes)
     .links(links)
 
-    .linkDistance(width)
+    .linkDistance(w)
     .on("tick", function(e){
         //hack to force IE to do it's job!
         link.each(function() {this.parentNode.insertBefore(this, this); });
@@ -147,9 +135,9 @@ force.nodes().forEach(function(d) {
         .x(function(d){return Math.round(d[0])})
         .y(function(d){return Math.round(d[1])});
     function linkPath(d){
-        return connector([[d.source.x + d.source.width/2, d.source.y + d.source.height/2],
-            [d.source.x + d.source.width/2, d.target.y + d.target.height/2],
-            [d.target.x  - markerW , d.target.y + d.target.height/2]]);
+        return connector([[d.source.x + w/2, d.source.y + h/2],
+            [d.source.x + w/2, d.target.y + h/2],
+            [d.target.x  - markerW , d.target.y + h/2]]);
     }
 
 let link = svg.selectAll('.link')
@@ -167,25 +155,23 @@ let node = svg.selectAll('.node')
     .data(nodes)
     .enter().append('g')
     .attr('class', 'node')
-    .attr("transform", function(d){
-        return "translate("+ d.q.x+","+ d.q.y+")";
-    })
-    .call(force.drag)
+    // .attr("transform", function(d){
+    //     return "translate("+ d.q.x+","+ d.q.y+")";
+    // })
+    .call(force.drag);
 
 node.append("rect").attr("class", "nodeRect")
     .attr("rx", 3)
     .attr("ry", 3)
     .transition(1000)
     .duration(1000)
-
     .attr("transform", "translate(" + 0 + "," + 0 + ")")
-
+    .attr('width','200')
+    .attr('height','100')
+    .attr('fill', "#BCD8CD")
     .attr('stroke','white')
     .attr('stroke-width','2')
-    .style("filter", "url(#drop-shadow)")
-    .attr('width', function(d) { return d.width; })
-    .attr('height', function(d) { return d.height; })
-    .style("fill", function(d) { return d.color; })
+    .style("filter", "url(#drop-shadow)");
 
 
 node.append("text").style("text-anchor", "middle")
@@ -194,9 +180,9 @@ node.append("text").style("text-anchor", "middle")
     .attr("fill", "black")
     .style("stroke-width", "0.2px")
     .style("font-size", 16 + "px")
-    .attr("y", function (d){return d.height/2+6;})
-    .attr("x", function (d){return d.width/2;})
-    .text(function (d) {return d.name;})
+    .attr("y", function (d){return h/2+6;})
+    .attr("x", function (d){return w/2;})
+    .text(function (d) {return d.name;});
 
 force.start();
 
@@ -232,14 +218,17 @@ feMerge.append("feMergeNode")
     .attr("in", "SourceGraphic");
 
 d3.json("https://api.myjson.com/bins/135j8g", function(error, data) {
-    if (error) return console.log("there was an error loading the data: " + error);
+
 
     let components = data.components;
 
 
-        components.forEach((component) => {
-            console.log(component.position);
-        })
-
-
 });
+
+
+var line = svg.append("line")
+    .style("stroke", "black")
+    .attr("x1", 150)
+    .attr("y1", 100)
+    .attr("x2", 250)
+    .attr("y2", 300);
