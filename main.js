@@ -63,21 +63,22 @@ var column = row.selectAll(".square")
 
 // end of grid
 
+
+
 let w = 200,
     h = 100;
 
    let nodes = [
-        {name: 'Comp-1', x: 10, y: 20 },
-        {name: 'Comp-2', x: 150 , y: 150},
-        {name: 'Comp-3', x: 279, y: 280 },
-        {name: 'Comp-4', x: 460, y: 390 },
-        {name: 'Comp-5', x: 690, y: 420 }
+        {name: 'Comp-1', x: 10, y: 20, fixed: true },
+        {name: 'Comp-2', x: 150 , y: 150, fixed: true},
+        {name: 'Comp-3', x: 279, y: 280, fixed: true },
+        {name: 'Comp-4', x: 460, y: 390, fixed: true },
+        {name: 'Comp-5', x: 690, y: 420,fixed: true }
 
     ];
-        // .map(function(d, i){return (d.fixed = (i !== 5), d)});
+       // .map(function(d, i){return (d.fixed = (i !== 5), d)});
 
 
-console.log(nodes.map(function(d, i){return (d.fixed = (i !== 5), d)}));
 
 let links = [
     { source: 0, target: 1 },
@@ -89,6 +90,8 @@ let links = [
 
 let svg  = d3.select('#svg');
 
+let g = svg.append('g');
+
 let markerW = 9, markerH = 6,
     marker = svg.append('marker')
         .attr('id',"triangle")
@@ -98,22 +101,22 @@ let markerW = 9, markerH = 6,
         .attr('markerUnits','strokeWidth')
         .attr('markerWidth',markerW)
         .attr('markerHeight',markerH)
-        .attr('orient','auto')
+        .attr('orient','auto');
+
 
 let path = marker.append('path')
     .attr('d',"M 0,0 m -5,-5 L 5,0 L -5,5 Z")
 
 
-
 let force = d3.layout.force()
-    // .size([width, height])
+   .size([w, h])
     .nodes(nodes)
     .links(links)
 
     .linkDistance(w)
     .on("tick", function(e){
-        //hack to force IE to do it's job!
-        link.each(function() {this.parentNode.insertBefore(this, this); });
+        // //hack to force IE to do it's job!
+        // link.each(function() {this.parentNode.insertBefore(this, this); });
 
         link.attr("d", linkPath);
         node.attr("transform", function (d) {
@@ -147,6 +150,9 @@ let link = svg.selectAll('.link')
     .attr('marker-end','url(#triangle)')
     .attr('stroke','black')
     .attr("fill", "none");
+
+
+
 
 let defs = svg.append("defs");
 
@@ -183,6 +189,8 @@ node.append("text").style("text-anchor", "middle")
     .attr("y", function (d){return h/2+6;})
     .attr("x", function (d){return w/2;})
     .text(function (d) {return d.name;});
+
+
 
 force.start();
 
@@ -223,12 +231,8 @@ d3.json("https://api.myjson.com/bins/135j8g", function(error, data) {
     let components = data.components;
 
 
+
+
+
 });
 
-
-var line = svg.append("line")
-    .style("stroke", "black")
-    .attr("x1", 150)
-    .attr("y1", 100)
-    .attr("x2", 250)
-    .attr("y2", 300);
